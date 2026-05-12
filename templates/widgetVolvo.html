@@ -433,7 +433,7 @@
         { label: "SUV eléctrico", value: "Estoy buscando un SUV eléctrico", next: "interest" },
         { label: "Híbrido enchufable", value: "Quiero un híbrido enchufable", next: "interest" },
         { label: "Comparar modelos", value: "Quiero comparar modelos Volvo", next: "interest" },
-        { label: "Hablar con asesor", value: "Deseo hablar con un asesor", next: "contact", primary: true }
+        { label: "Ver modelos", value: "Quiero ver los modelos disponibles", next: "interest", primary: true }
       ],
       interest: [
         { label: "Ciudad", value: "Uso principalmente en ciudad", next: "budget" },
@@ -464,7 +464,7 @@
     };
 
     const stepIntro = {
-      start: "Hola, soy tu asesor virtual. bienvenido a Volvo <br> ¿Me compartes tu nombre y ciudad para iniciar la asesoría?",
+      start: "Hola, soy tu asesor virtual. bienvenido a Volvo ¿Me compartes tu nombre y ciudad para iniciar la asesoría?",
       interest: "Perfecto. También puedes contarme un poco más o elegir una de estas opciones.",
       budget: "Entendido. ¿Cuál es tu presupuesto aproximado?",
       timeframe: "Gracias. ¿En qué plazo estás pensando comprar?",
