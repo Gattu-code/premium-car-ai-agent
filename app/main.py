@@ -304,3 +304,11 @@ def widget_ui(request: Request):
         request=request,
         name="widgetVolvo.html"
     )
+    
+@app.get("/", response_class=HTMLResponse)
+@app.get("/ui", response_class=HTMLResponse)
+def demo_index(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html"
+    )

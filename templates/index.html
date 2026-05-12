@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Car AI Agent - Demos</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f8fafc, #eef2f7);
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 900px;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 36px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: #111827;
+      background: #ffffff;
+      transition: all 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+      border-color: #111827;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card-text {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <div class="eyebrow">Volvo AI Demo</div>
+
+    <h1>Premium Car AI Agent</h1>
+
+    <p class="subtitle">
+      Panel central para acceder a las interfaces de prueba del agente comercial,
+      dashboard de leads y widget embebible.
+    </p>
+
+    <section class="grid">
+
+      <a class="card" href="/ui/chat" target="_blank">
+        <div class="card-title">Chat full page</div>
+        <div class="card-text">
+          Interfaz completa para probar conversación, quick replies y flujo comercial.
+        </div>
+      </a>
+
+      <a class="card" href="/ui/widget" target="_blank">
+        <div class="card-title">Widget flotante</div>
+        <div class="card-text">
+          Demo del widget estilo Volvo para embeber en una página comercial.
+        </div>
+      </a>
+
+      <a class="card" href="/ui/leads" target="_blank">
+        <div class="card-title">Dashboard de leads</div>
+        <div class="card-text">
+          Listado de leads, ciudad de cita, resumen y conversación completa.
+        </div>
+      </a>
+
+    </section>
+
+    <div class="footer">
+      Premium Car AI Agent · FastAPI + n8n + OpenRouter
+    </div>
+  </main>
+</body>
+</html>
