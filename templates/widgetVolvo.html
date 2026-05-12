@@ -345,7 +345,15 @@
       También puedes sobrescribirla desde consola:
         localStorage.setItem("n8nWebhookUrl", "https://tu-dominio.com/webhook/premium-car-agent")
     */
-    const DEFAULT_WEBHOOK = "http://localhost:5678/webhook/premium-car-agent";
+    
+    const IS_LOCAL =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+
+    const DEFAULT_WEBHOOK = IS_LOCAL
+      ? "http://localhost:5678/webhook/premium-car-agent"
+      : "/webhook/premium-car-agent";
+    
     const ROUTE = "general";
     const LOAD_PREVIOUS_SESSION = false;
 

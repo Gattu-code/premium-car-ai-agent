@@ -229,7 +229,15 @@
   Test webhook:
     http://localhost:5678/webhook-test/premium-car-agent
 */
-const WEBHOOK_URL = localStorage.getItem("premiumCarWebhookUrl") || "http://localhost:5678/webhook/premium-car-agent";
+const IS_LOCAL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+const WEBHOOK_URL =
+  localStorage.getItem("premiumCarWebhookUrl") ||
+  (IS_LOCAL
+    ? "http://localhost:5678/webhook/premium-car-agent"
+    : "/webhook/premium-car-agent");
 
 const STORAGE_KEYS = {
   sessionId: "premiumCarSessionId",
