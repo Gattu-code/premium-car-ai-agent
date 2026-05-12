@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Leads capturados</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 24px;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #111827;
+      color: white;
+    }
+
+    .caliente {
+      background: #ffe5e5;
+    }
+
+    .tibio {
+      background: #fff7e6;
+    }
+
+    .frio {
+      background: #e6f7ff;
+    }
+
+    .summary {
+      max-width: 360px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Leads capturados</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Session</th>
+        <th>Fecha</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Ciudad</th>
+        <th>Interés</th>
+        <th>Segmento</th>
+        <th>Presupuesto</th>
+        <th>Vehículo actual</th>
+        <th>Pago</th>
+        <th>Tiempo compra</th>
+        <th>Familia</th>
+        <th>Temperatura</th>
+        <th>Score</th>
+        <th>Resumen</th>
+      </tr>
+    </thead>
+
+    <tbody id="leadsTable"></tbody>
+  </table>
+
+  <script>
+    function formatDate(ts) {
+      if (!ts) return "-";
+
+      const date = new Date(ts);
+
+      if (isNaN(date.getTime())) {
+        return ts;
+      }
+
+      return date.toLocaleString("es-CO", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    fetch("/leads")
+      .then(res => res.json())
+      .then(data => {
+        const table = document.getElementById("leadsTable");
+
+        data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        data.forEach(lead => {
+          const row = document.createElement("tr");
+
+          if (lead.lead_temperature) {
+            row.className = lead.lead_temperature;
+          }
+
+          row.innerHTML = `
+            <td>${lead.session_id || '-'}</td>  
+            <td>${formatDate(lead.timestamp)}</td>
+            <td>${lead.lead_name || "-"}</td>
+            <td>${lead.email || "-"}</td>
+            <td>${lead.phone || "-"}</td>
+            <td>${lead.city || "-"}</td>
+            <td>${lead.vehicle_interest || "-"}</td>
+            <td>${lead.vehicle_segment || "-"}</td>
+            <td>${lead.budget_range || "-"}</td>
+            <td>${lead.current_vehicle || "-"}</td>
+            <td>${lead.payment_method || "-"}</td>
+            <td>${lead.purchase_timeframe || "-"}</td>
+            <td>${lead.family_context || "-"}</td>
+            <td>${lead.lead_temperature || "-"}</td>
+            <td>${lead.priority_score ?? "-"}</td>
+            <td class="summary">${lead.summary || "-"}</td>
+          `;
+
+          table.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error("Error cargando leads:", error);
+      });
+  </script>
+</body>
+</html>

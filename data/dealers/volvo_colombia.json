@@ -1,0 +1,116 @@
+{
+  "brand": "Volvo",
+  "market": "Colombia",
+  "dealers": [
+    {
+      "name": "Autonal",
+      "city": "Bogotá",
+      "postal_code": "110121",
+      "type": ["sales", "service"],
+      "sales_address": "Autopista Norte #127D-38",
+      "service_address": "Carrera 47 #128-21",
+      "phone": "03004744364",
+      "notes": "Cuenta con punto de ventas y taller en Bogotá."
+    },
+    {
+      "name": "Ceiba Motor Manizales",
+      "city": "Manizales",
+      "postal_code": "170003",
+      "type": ["sales", "service"],
+      "address": "CRA 31 #98A-15 vía al Magdalena, Sector Puente de La Libertad",
+      "phone": "3182309702",
+      "notes": "Sede Volvo en Manizales."
+    },
+    {
+      "name": "Ceiba Motor Pereira",
+      "city": "Pereira",
+      "postal_code": "660008",
+      "type": ["sales", "service"],
+      "address": "Calle 38 #8-58 Bodega 5",
+      "phone": "3188273753",
+      "notes": "Sede Volvo en Pereira."
+    },
+    {
+      "name": "Euro Marcali",
+      "city": "Bogotá",
+      "postal_code": "110311",
+      "type": ["sales"],
+      "address": "Km 13 #34-76, Bogotá, Cundinamarca",
+      "phone": "3176490119",
+      "notes": "Vitrina Volvo en Bogotá."
+    },
+    {
+      "name": "Los Coches",
+      "city": "Bogotá",
+      "postal_code": "111121",
+      "type": ["sales", "service"],
+      "address": "Carrera 70 #100-30, Avenida de la Constitución #100-30, Suba",
+      "phone": "(601)6299888 ext.1201",
+      "notes": "Sede Volvo en Bogotá."
+    },
+    {
+      "name": "Los Coches - Cali",
+      "city": "Cali",
+      "postal_code": "760035",
+      "type": ["sales"],
+      "address": "Cl. 5 #No 66B-12, Vitrina, Barrio El Refugio",
+      "phone": "3228935415",
+      "notes": "Vitrina Volvo en Cali."
+    },
+    {
+      "name": "Massy Motors Costa",
+      "city": "Barranquilla",
+      "postal_code": "080010",
+      "type": ["sales", "service"],
+      "address": "Vía 40 #67-180",
+      "phone": "3103830343",
+      "notes": "Sede Volvo en Barranquilla."
+    },
+    {
+      "name": "Massy Motors Medellín",
+      "city": "Medellín",
+      "postal_code": "050021",
+      "type": ["sales", "service"],
+      "address": "Calle 29 #43A-05",
+      "phone": "(601)5143444",
+      "notes": "Sede Volvo en Medellín."
+    },
+    {
+      "name": "Mayorautos",
+      "city": "Bucaramanga",
+      "postal_code": "680002",
+      "type": ["sales", "service"],
+      "sales_address": "Calle 40A #26-25, Vitrina",
+      "service_address": "Carrera 26 #40-37, Taller",
+      "phone": "3172364887",
+      "notes": "Cuenta con vitrina y taller en Bucaramanga."
+    },
+    {
+      "name": "Mayorautos",
+      "city": "Bucaramanga",
+      "postal_code": "680001",
+      "type": ["sales"],
+      "address": "Carrera 26 #40-12",
+      "phone": "76323434",
+      "notes": "Sede adicional Mayorautos en Bucaramanga."
+    },
+    {
+      "name": "Re Industrias",
+      "city": "Ibagué",
+      "postal_code": "730002",
+      "type": ["sales", "service"],
+      "address": "Carrera 10 Sur #66-67, Av. Mirolindo frente a Gradinsa",
+      "phone": "3336025006",
+      "notes": "Sede Volvo en Ibagué."
+    },
+    {
+      "name": "Volvo Comagro",
+      "city": "Chía",
+      "postal_code": "2502",
+      "type": ["sales", "service"],
+      "address": "Km 1.5 Variante Chía a Cajicá, costado occidental, sector Tres Esquinas",
+      "phone": "6528900",
+      "notes": "Sede Volvo en Chía / Sabana de Bogotá."
+    }
+  ]
+}

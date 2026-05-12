@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+.env
+.venv/
+
+# OS / editor
+.DS_Store
+
+data/*.json
+
+
+data/*.json

@@ -1,0 +1,21 @@
+services:
+  premium-car-agent:
+    build: .
+    container_name: premium-car-agent
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./data:/app/data
+
+    expose:
+      - "8001"
+
+    networks:
+      - fleet-demo_default
+
+networks:
+  fleet-demo_default:
+    external: true

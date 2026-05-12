@@ -1,0 +1,29 @@
+[33mc6a8b84[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Add Docker deployment configuration
+[33m00af9b6[m Prepare project for deployment
+[33m1e1cb9d[m Improve sales flow with dynamic quick replies and dealer validation
+[33m89cbbe6[m Add persistent conversation history viewer
+[33m0a6173d[m Add date normalization and persistent conversation history
+[33mb291dac[m Add current date context and relative date normalization
+[33m8aded07[m Milestone: stable structured advisor with model cost debug vesion stable for demo
+[33mf396e9c[m Stabilize structured context and appointment flow
+[33m5db99bd[m Add context source switches and structured context mode
+[33m0100a4c[m Use structured context for catalog dealers and brand knowledge
+[33m09e947a[m Improve dealer context and appointment data handling
+[33m2e2323d[m Improve prompt rules for appointment confirmation and dealer context
+[33m12ebd4b[m Checkpoint: RAG V3 stable before context pack
+[33mdbb0f61[m feat: add local embedding retrieval for catalog RAG v2
+[33m0d14adc[m feat(v1): end-to-end AI sales agent for Volvo leads
+[33m75bb517[m feat: stabilize stateful chat, n8n flow and lead capture
+[33m2e07dc2[m feat: stabilize Volvo widget and n8n lead flow
+[33maa36ced[m feat: improve retrieval logic and multi-source RAG foundation
+[33m792ac58[m feat(ai-agent): add RAG-ready catalog retrieval and commercial prompt v3
+[33m425afaf[m feat(ai-agent): stable lead capture with email support, improved prompt strategy and robust persistence
+[33m386676a[m feat(ai-agent): Version 1 estable --- stabilize medium prompt strategy and keep scalable prompt modes for local LLMs
+[33m3b6c736[m feat(ai-agent): stabilize medium prompt strategy and keep scalable prompt modes for local LLMs
+[33m7fa288a[m refactor: add debug timing and introduce scalable prompt modes for local LLM tuning
+[33m6ff7044[m feat: stable AI pipeline with fallback, debug instrumentation, and Ollama integration (qwen working baseline)
+[33m34ebce4[m Build AI-powered premium car lead agent with FastAPI, Ollama, n8n workflow and web chat UI
+[33m224703d[m Add session memory and commercial routing for premium car agent
+[33m8b5dfa2[m Revert repetitive question guard and simplify agent flow
+[33m63ae1f7[m Cleanup: remove pycache and unnecessary files
+[33me00411a[m Initial commit: premium car AI agent MVP with FastAPI and prompt

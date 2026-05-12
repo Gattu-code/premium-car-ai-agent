@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Premium Car AI Agent</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg,#f8fafc,#eef2f7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .app {
+      width: 90%;
+      max-width: 900px;
+      height: 90vh;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    #sessionBadge {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .reset-button {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .reset-button:hover {
+      background: #f9fafb;
+    }
+
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message-row {
+      display: flex;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .message-row.agent {
+      justify-content: flex-start;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .message.user {
+      background: #111827;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.agent {
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      border-bottom-left-radius: 4px;
+    }
+
+    .composer {
+      border-top: 1px solid #eee;
+      padding: 12px 18px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .composer input {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .composer input:focus {
+      border-color: #111827;
+    }
+    .composer button {
+      flex: 0 0 auto;
+    }    
+    
+    button {
+      background: #111827;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .typing {
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .quick-replies {
+      border-top: 1px solid #eee;
+      padding: 10px 18px 4px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .quick-reply {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #d1d5db;
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .quick-reply:hover {
+      background: #111827;
+      color: #ffffff;
+      border-color: #111827;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="title">Premium Car AI Agent</div>
+      <div id="sessionBadge"></div>
+    </div>
+
+    <div class="header-actions">
+      <button id="resetButton" class="reset-button" title="Nueva consulta" aria-label="Nueva consulta">↻</button>
+    </div>
+  </div>
+
+ <div id="chat" class="chat"></div>
+
+<div id="quickReplies" class="quick-replies"></div>
+
+<div class="composer">
+  <input id="input" placeholder="Escribe tu mensaje..." autocomplete="off">
+  <button id="sendButton">Enviar</button>
+</div>
+
+<script>
+/*
+  Chat de prueba conectado a n8n.
+
+  Producción local:
+    http://localhost:5678/webhook/premium-car-agent
+
+  Test webhook:
+    http://localhost:5678/webhook-test/premium-car-agent
+*/
+const WEBHOOK_URL = localStorage.getItem("premiumCarWebhookUrl") || "http://localhost:5678/webhook/premium-car-agent";
+
+const STORAGE_KEYS = {
+  sessionId: "premiumCarSessionId",
+  messages: "premiumCarMessages",
+  leadState: "premiumCarLeadState",
+  conversationHistory: "premiumCarConversationHistory"
+};
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const sendButton = document.getElementById("sendButton");
+const resetButton = document.getElementById("resetButton");
+const sessionBadge = document.getElementById("sessionBadge");
+const quickReplies = document.getElementById("quickReplies");
+
+const state = {
+  sessionId: getOrCreateSessionId(),
+  messages: getStoredArray(STORAGE_KEYS.messages),
+  conversationHistory: getStoredArray(STORAGE_KEYS.conversationHistory),
+  leadState: getStoredObject(STORAGE_KEYS.leadState)
+};
+
+function updateSessionBadge() {
+  sessionBadge.innerText = "Sesión: " + state.sessionId;
+}
+
+function getOrCreateSessionId() {
+  let sessionId = localStorage.getItem(STORAGE_KEYS.sessionId);
+
+  if (!sessionId) {
+    sessionId = "chat-" + Date.now();
+    localStorage.setItem(STORAGE_KEYS.sessionId, sessionId);
+  }
+
+  return sessionId;
+}
+
+function getStoredArray(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function getStoredObject(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function persistState() {
+  localStorage.setItem(STORAGE_KEYS.sessionId, state.sessionId);
+  localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(state.messages.slice(-60)));
+  localStorage.setItem(STORAGE_KEYS.conversationHistory, JSON.stringify(state.conversationHistory.slice(-12)));
+  localStorage.setItem(STORAGE_KEYS.leadState, JSON.stringify(state.leadState || {}));
+}
+
+function addMessage(role, text, persist = true) {
+  const row = document.createElement("div");
+  row.className = "message-row " + role;
+
+  const bubble = document.createElement("div");
+  bubble.className = "message " + role;
+  bubble.innerText = text;
+
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+
+  if (persist && text !== "Escribiendo...") {
+    state.messages.push({ role, text });
+
+    const historyRole = role === "agent" ? "assistant" : "user";
+    state.conversationHistory.push({
+      role: historyRole,
+      content: text
+    });
+
+    state.messages = state.messages.slice(-60);
+    state.conversationHistory = state.conversationHistory.slice(-12);
+    persistState();
+  }
+}
+
+function restoreMessages() {
+  chat.innerHTML = "";
+
+  if (state.messages.length === 0) {
+    addMessage("agent", "Hola, soy tu asesor virtual. ¿Me compartes tu nombre y ciudad para iniciar la asesoría?");
+    return;
+  }
+
+  state.messages.forEach((item) => {
+    addMessage(item.role, item.text, false);
+  });
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addTyping() {
+  removeTyping();
+
+  const row = document.createElement("div");
+  row.className = "message-row agent";
+  row.id = "typing";
+
+  const bubble = document.createElement("div");
+  bubble.className = "typing";
+  bubble.innerText = "Escribiendo...";
+
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeTyping() {
+  const typing = document.getElementById("typing");
+  if (typing) typing.remove();
+}
+
+function getAgentReply(data) {
+  return (
+    data.assistant_reply ||
+    data.reply ||
+    data.message ||
+    data.response ||
+    data.output ||
+    data.json?.assistant_reply ||
+    data.json?.reply ||
+    data.body?.assistant_reply ||
+    data.body?.reply ||
+    "Sin respuesta del agente."
+  );
+}
+
+function getUpdatedLeadState(data) {
+  return (
+    data.updated_lead_state ||
+    data.lead_state ||
+    data.json?.updated_lead_state ||
+    data.body?.updated_lead_state ||
+    {}
+  );
+}
+
+function getQuickReplies(data) {
+  const replies =
+    data.quick_replies ||
+    data.quickReplies ||
+    data.json?.quick_replies ||
+    data.json?.quickReplies ||
+    data.body?.quick_replies ||
+    data.body?.quickReplies ||
+    [];
+
+  if (!Array.isArray(replies)) {
+    return [];
+  }
+
+  return replies
+    .map(reply => String(reply || "").trim())
+    .filter(reply => reply)
+    .slice(0, 4);
+}
+
+function renderQuickReplies(replies) {
+  quickReplies.innerHTML = "";
+
+  if (!Array.isArray(replies) || replies.length === 0) {
+    quickReplies.style.display = "none";
+    return;
+  }
+
+  replies.forEach(reply => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "quick-reply";
+    button.innerText = reply;
+
+    button.addEventListener("click", () => {
+      quickReplies.innerHTML = "";
+      quickReplies.style.display = "none";
+
+      input.value = reply;
+      sendMessage();
+    });
+
+    quickReplies.appendChild(button);
+  });
+
+  quickReplies.style.display = "flex";
+}
+
+
+function mergeLeadState(updatedLeadState) {
+  if (!updatedLeadState || typeof updatedLeadState !== "object") {
+    return;
+  }
+
+  state.leadState = {
+    ...state.leadState,
+    ...updatedLeadState
+  };
+
+  persistState();
+}
+
+async function sendMessage() {
+  const message = input.value.trim();
+  if (!message || sendButton.disabled) return;
+
+  renderQuickReplies([]);
+
+  addMessage("user", message);
+  input.value = "";
+  sendButton.disabled = true;
+  addTyping();
+
+  try {
+    const payload = {
+      session_id: state.sessionId,
+      message: message,
+
+      // -----------------------------
+      // Estado acumulado enviado al backend
+      // -----------------------------
+      // Esto evita que el agente olvide nombre, ciudad, presupuesto,
+      // modelo de interés y demás datos capturados en turnos previos.
+      lead_state: state.leadState || {},
+      conversation_history: state.conversationHistory.slice(-8),
+      catalog_context: "",
+      metadata: {
+        source: "chat-html",
+        mode: "full-page-test-chat"
+      }
+    };
+
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const text = await res.text();
+
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status + ": " + text);
+    }
+
+    if (!text) {
+      throw new Error("Respuesta vacía desde n8n.");
+    }
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      throw new Error("La respuesta no es JSON válido: " + text);
+    }
+
+    removeTyping();
+
+    mergeLeadState(getUpdatedLeadState(data));
+
+    const reply = getAgentReply(data);
+    addMessage("agent", reply);
+
+    renderQuickReplies(getQuickReplies(data));
+
+  } catch (err) {
+    removeTyping();
+    console.error("Chat error:", err);
+
+    addMessage(
+      "agent",
+      "Estoy teniendo un problema técnico. Intenta nuevamente en unos segundos."
+    );
+  } finally {
+    sendButton.disabled = false;
+    input.focus();
+  }
+}
+
+function resetConversation() {
+  localStorage.removeItem(STORAGE_KEYS.sessionId);
+  localStorage.removeItem(STORAGE_KEYS.messages);
+  localStorage.removeItem(STORAGE_KEYS.leadState);
+  localStorage.removeItem(STORAGE_KEYS.conversationHistory);
+
+  state.sessionId = "chat-" + Date.now();
+  state.messages = [];
+  state.conversationHistory = [];
+  state.leadState = {};
+
+  localStorage.setItem(STORAGE_KEYS.sessionId, state.sessionId);
+
+  chat.innerHTML = "";
+  renderQuickReplies([]);
+  updateSessionBadge();
+  addMessage("agent", "Hola, soy tu asesor virtual. ¿Me compartes tu nombre y ciudad para iniciar la asesoría?");
+  input.focus();
+}
+
+sendButton.addEventListener("click", sendMessage);
+
+resetButton.addEventListener("click", resetConversation);
+
+input.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+updateSessionBadge();
+restoreMessages();
+input.focus();
+</script>
+
+</body>
+</html>

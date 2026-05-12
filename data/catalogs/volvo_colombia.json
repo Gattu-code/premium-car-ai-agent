@@ -1,0 +1,193 @@
+[
+  {
+    "brand": "Volvo",
+    "market": "Colombia",
+    "model": "EX30 Cross Country",
+    "body_type": "SUV",
+    "segment": "compacta premium eléctrica",
+    "fuel_type": "eléctrico",
+    "is_fully_electric": true,
+    "price_from_cop": 265000000,
+    "range_km": 476,
+    "charging_time": "10% a 80% desde 26 minutos en carga rápida DC",
+    "power_hp": 272,
+    "acceleration_0_100_kmh": "5.3 s",
+    "versions": [
+      {
+        "name": "Single Motor",
+        "range_level": "alta",
+        "power_level": "medio"
+      },
+      {
+        "name": "Single Motor Extended Range",
+        "range_level": "alta",
+        "power_level": "medio"
+      }
+    ],
+    "best_for": ["ciudad", "uso diario", "primer vehículo eléctrico", "familias pequeñas"],
+    "key_strengths": ["carga rápida", "autonomía eléctrica", "tamaño compacto", "seguridad", "sin pico y placa", "cargador incluido"],
+    "family_fit": "media",
+    "urban_fit": "muy alta",
+    "travel_fit": "media",
+    "premium_level": "medio-alto",
+    "description": "SUV eléctrico compacto con buena autonomía, carga rápida y beneficios urbanos. Ideal para ciudad, uso diario y entrada al mundo eléctrico premium."
+  },
+  {
+    "brand": "Volvo",
+    "market": "Colombia",
+    "model": "EX40",
+    "body_type": "SUV",
+    "segment": "compacta premium eléctrica",
+    "fuel_type": "eléctrico",
+    "is_fully_electric": true,
+    "price_from_cop": 290000000,
+    "range_km": 500,
+    "charging_time": "10% a 80% desde 33 minutos en carga rápida DC",
+    "power_hp": 442,
+    "acceleration_0_100_kmh": "4.6 s",
+    "versions": [
+      {
+        "name": "Single Motor",
+        "range_level": "media-alta",
+        "power_level": "medio"
+      },
+      {
+        "name": "Twin Motor",
+        "range_level": "alta",
+        "power_level": "alto"
+      },
+      {
+        "name": "Twin Motor Performance",
+        "range_level": "alta",
+        "power_level": "muy alto"
+      }
+    ],
+    "best_for": ["familias pequeñas", "uso diario", "uso mixto ciudad-carretera", "eléctrico con más espacio"],
+    "key_strengths": ["autonomía eléctrica", "carga rápida", "diseño escandinavo", "tecnología", "potencia", "sin pico y placa", "cargador incluido"],
+    "family_fit": "alta",
+    "urban_fit": "alta",
+    "travel_fit": "media-alta",
+    "premium_level": "alto",
+    "description": "SUV 100% eléctrico premium con mayor autonomía y espacio que el EX30. Buena opción para quienes quieren un eléctrico versátil para ciudad y trayectos interurbanos."
+  },
+  {
+    "brand": "Volvo",
+    "market": "Colombia",
+    "model": "EC40",
+    "body_type": "SUV coupé",
+    "segment": "compacta premium eléctrica",
+    "fuel_type": "eléctrico",
+    "is_fully_electric": true,
+    "price_from_cop": 340000000,
+    "range_km": 527,
+    "charging_time": "10% a 80% desde 33 minutos en carga rápida DC",
+    "power_hp": 442,
+    "drive_type": "Twin Motor",
+    "versions": [
+      {
+        "name": "P8",
+        "range_level": "alta",
+        "power_level": "alto"
+      }
+    ],
+    "best_for": ["diseño", "estilo", "performance", "tecnología", "clientes premium"],
+    "key_strengths": ["diseño coupé", "autonomía eléctrica", "potencia", "tracción Twin Motor", "seguridad", "sin pico y placa", "cargador incluido"],
+    "family_fit": "media",
+    "urban_fit": "alta",
+    "travel_fit": "media-alta",
+    "premium_level": "alto",
+    "description": "SUV coupé 100% eléctrico enfocado en diseño, estilo, sostenibilidad y desempeño. Ideal para clientes que priorizan una experiencia premium más emocional y deportiva."
+  },
+  {
+    "brand": "Volvo",
+    "market": "Colombia",
+    "model": "EX90",
+    "body_type": "SUV",
+    "segment": "grande premium eléctrica",
+    "fuel_type": "eléctrico",
+    "is_fully_electric": true,
+    "price_from_cop": 470000000,
+    "range_km": 570,
+    "charging_time": "10% a 80% desde 32 minutos en carga rápida DC",
+    "power_hp": 517,
+    "acceleration_0_100_kmh": "4.9 s",
+    "seating_capacity": 7,
+    "versions": [
+      {
+        "name": "Twin Motor",
+        "range_level": "alta",
+        "power_level": "muy alto"
+      },
+      {
+        "name": "Twin Motor Performance",
+        "range_level": "alta",
+        "power_level": "muy alto"
+      }
+    ],
+    "best_for": ["familias grandes", "viajes largos", "lujo", "tecnología avanzada", "seguridad"],
+    "key_strengths": ["7 plazas", "mayor autonomía eléctrica", "lujo escandinavo", "seguridad inteligente", "LiDAR", "alta potencia", "sin pico y placa", "cargador incluido"],
+    "family_fit": "muy alta",
+    "urban_fit": "media",
+    "travel_fit": "muy alta",
+    "premium_level": "muy alto",
+    "description": "SUV eléctrico insignia de Volvo, con hasta 7 plazas, alto lujo, gran autonomía, seguridad inteligente y tecnología avanzada."
+  },
+  {
+    "brand": "Volvo",
+    "market": "Colombia",
+    "model": "XC60",
+    "body_type": "SUV",
+    "segment": "mediana premium híbrida enchufable",
+    "fuel_type": "híbrido enchufable",
+    "is_fully_electric": false,
+    "price_from_cop": 329990000,
+    "range_electric_km": 81,
+    "battery_kwh": 19,
+    "power_hp": 462,
+    "acceleration_0_100_kmh": "4.8 s",
+    "drive_type": "T8 AWD",
+    "versions": [
+      {
+        "name": "XC60 T8",
+        "range_level": "media eléctrica / alta combinada",
+        "power_level": "muy alto"
+      }
+    ],
+    "best_for": ["familias", "personas con hijos", "bebé", "mascotas", "viajes frecuentes", "uso mixto ciudad-carretera"],
+    "key_strengths": ["híbrido recargable", "81 km en modo eléctrico", "potencia híbrida", "seguridad", "eficiencia", "versatilidad"],
+    "family_fit": "alta",
+    "urban_fit": "media-alta",
+    "travel_fit": "alta",
+    "premium_level": "alto",
+    "description": "SUV híbrido enchufable premium que combina eficiencia eléctrica para ciudad con respaldo de combustión para viajes. Ideal para familias que buscan equilibrio entre comodidad, seguridad y versatilidad."
+  },
+  {
+    "brand": "Volvo",
+    "market": "Colombia",
+    "model": "XC90",
+    "body_type": "SUV",
+    "segment": "grande premium híbrida enchufable",
+    "fuel_type": "híbrido enchufable",
+    "is_fully_electric": false,
+    "price_from_cop": 500000000,
+    "range_electric_km": 77,
+    "battery_kwh": 19,
+    "power_hp": 462,
+    "acceleration_0_100_kmh": "5.3 s",
+    "drive_type": "T8 AWD",
+    "versions": [
+      {
+        "name": "XC90 T8",
+        "range_level": "media eléctrica / alta combinada",
+        "power_level": "muy alto"
+      }
+    ],
+    "best_for": ["familias grandes", "viajes largos", "máximo espacio", "lujo", "seguridad"],
+    "key_strengths": ["SUV de lujo", "espacio para todos", "potencia híbrida", "seguridad", "comodidad", "versatilidad para viajes"],
+    "family_fit": "muy alta",
+    "urban_fit": "media",
+    "travel_fit": "muy alta",
+    "premium_level": "muy alto",
+    "description": "SUV híbrido enchufable grande de lujo, ideal para familias que necesitan máximo espacio, comodidad, seguridad y flexibilidad para ciudad y viajes largos."
+  }
+]

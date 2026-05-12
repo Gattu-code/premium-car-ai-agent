@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widget Volvo Colombia</title>
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --muted: #6f6f6f;
+      --line: #e8e8e8;
+      --soft: #f7f7f7;
+      --shadow: 0 14px 32px rgba(0,0,0,0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .chat-launcher {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      border: none;
+      background: #ffffff;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 9999;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      padding: 0;
+    }
+
+    .chat-launcher:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.22);
+    }
+
+    .chat-launcher img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .chat-window {
+      position: fixed;
+      right: 28px;
+      bottom: 156px;
+      width: 590px;
+      max-width: calc(100vw - 32px);
+      height: 620px;
+      max-height: calc(100vh - 180px);
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 28px 60px rgba(0,0,0,0.20);
+      z-index: 9998;
+    }
+
+    .chat-window.open {
+      display: flex;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .chat-brand {
+      font-size: 13px;
+      letter-spacing: 7px;
+      margin-bottom: 8px;
+    }
+
+    .chat-title {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .chat-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .chat-close {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: #111111;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .chat-close:hover {
+      background: #fafafa;
+    }
+
+    .chat-actions {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-reset {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: #111111;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .chat-reset:hover {
+      background: #fafafa;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      background: #fcfcfc;
+    }
+
+    .message {
+      max-width: 84%;
+      margin-bottom: 12px;
+      padding: 13px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .message.bot {
+      background: #f6f6f6;
+      border: 1px solid #ededed;
+      color: var(--text);
+      border-top-left-radius: 6px;
+    }
+
+    .message.user {
+      margin-left: auto;
+      background: #97bbe969;
+      color: #0e0d0d;
+      border-top-right-radius: 6px;
+    }
+
+    .message.system {
+      max-width: 100%;
+      background: #fff7f5;
+      border: 1px solid #efc7bb;
+      color: #8a3d2e;
+      font-size: 13px;
+    }
+
+    .quick-replies {
+      padding: 12px 14px 8px;
+      border-top: 1px solid var(--line);
+      background: #ffffff;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .quick-reply {
+      flex: 0 0 auto;
+      border: 1px solid #dcdcdc;
+      background: #ffffff;
+      color: #111111;
+      border-radius: 999px;
+      padding: 10px 13px;
+      cursor: pointer;
+      font-size: 13px;
+      white-space: nowrap;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .quick-reply:hover {
+      background: #f6f6f6;
+      border-color: #bdbdbd;
+    }
+
+    .quick-reply.primary {
+      background: #111111;
+      color: #ffffff;
+      border-color: #111111;
+      font-weight: 700;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 10px;
+      padding: 10px 14px 14px;
+      background: #ffffff;
+    }
+
+    .chat-form input {
+      flex: 1;
+      border: 1px solid #d9d9d9;
+      border-radius: 999px;
+      padding: 14px 16px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chat-form input:focus {
+      border-color: #b9b9b9;
+    }
+
+    .chat-form button {
+      width: 92px;
+      border: none;
+      border-radius: 999px;
+      background: #000000;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 14px 16px;
+    }
+
+    .chat-form button:hover {
+      opacity: 0.92;
+    }
+
+    @media (max-width: 640px) {
+      .chat-launcher {
+        right: 16px;
+        bottom: 16px;
+        width: 96px;
+        height: 96px;
+      }
+
+      .chat-launcher img {
+        width: 52px;
+        height: 52px;
+      }
+
+      .chat-window {
+        right: 16px;
+        bottom: 126px;
+        width: calc(100vw - 32px);
+        height: 540px;
+        max-height: calc(100vh - 150px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <button class="chat-launcher" id="chatLauncher" title="Abrir chat" aria-label="Abrir chat">
+    <img id="chatIcon" src="data:image/png;base64,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" alt="Ícono de chat" />
+  </button>
+
+  <section class="chat-window" id="chatWindow" aria-label="Ventana de chat">
+    <div class="chat-header">
+      <div>
+        <div class="chat-brand">VOLVO</div>
+        <div class="chat-title">Asesor virtual</div>
+        <div class="chat-subtitle">Puedes escribir libremente o usar una opción rápida.</div>
+      </div>
+      <div class="chat-actions">
+        <button class="chat-reset" id="chatReset" type="button" title="Nueva consulta" aria-label="Nueva consulta">↻</button>
+        <button class="chat-close" id="chatClose" type="button" aria-label="Cerrar chat">×</button>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="quick-replies" id="quickReplies"></div>
+
+    <form class="chat-form" id="chatForm">
+      <input
+        id="chatInput"
+        type="text"
+        placeholder="Escribe tu mensaje..."
+        autocomplete="off"
+      />
+      <button type="submit">Enviar</button>
+    </form>
+  </section>
+
+  <script>
+    /*
+      Configuración n8n
+
+      Producción local:
+        http://localhost:5678/webhook/premium-car-agent
+
+      Test webhook:
+        http://localhost:5678/webhook-test/premium-car-agent
+
+      Si publicas este HTML en una web externa, cambia localhost por la URL pública de n8n.
+      También puedes sobrescribirla desde consola:
+        localStorage.setItem("n8nWebhookUrl", "https://tu-dominio.com/webhook/premium-car-agent")
+    */
+    const DEFAULT_WEBHOOK = "http://localhost:5678/webhook/premium-car-agent";
+    const ROUTE = "general";
+    const LOAD_PREVIOUS_SESSION = false;
+
+    const STORAGE_KEYS = {
+      sessionId: "n8nChatSessionId",
+      messages: "volvoWidgetMessages",
+      step: "volvoWidgetStep",
+      open: "volvoWidgetOpen",
+      leadState: "volvoLeadState",
+      conversationHistory: "volvoConversationHistory"
+    };
+
+    const state = {
+      webhookUrl: localStorage.getItem("n8nWebhookUrl") || DEFAULT_WEBHOOK,
+      sessionId: getOrCreateSessionId(),
+      hasLoadedSession: false,
+      step: localStorage.getItem(STORAGE_KEYS.step) || "start",
+      messages: getStoredMessages(),
+      conversationHistory: getStoredConversationHistory(),
+      leadState: getStoredLeadState(),
+      isOpen: localStorage.getItem(STORAGE_KEYS.open) === "true"
+    };
+
+    const predefinedReplies = {
+      start: [
+        { label: "SUV eléctrico", value: "Estoy buscando un SUV eléctrico", next: "interest" },
+        { label: "Híbrido enchufable", value: "Quiero un híbrido enchufable", next: "interest" },
+        { label: "Comparar modelos", value: "Quiero comparar modelos Volvo", next: "interest" },
+        { label: "Hablar con asesor", value: "Deseo hablar con un asesor", next: "contact", primary: true }
+      ],
+      interest: [
+        { label: "Ciudad", value: "Uso principalmente en ciudad", next: "budget" },
+        { label: "Familia y viajes", value: "Uso familiar y viajes", next: "budget" },
+        { label: "Tecnología y seguridad", value: "Busco tecnología y seguridad", next: "budget" },
+        { label: "Inicio", value: "Volver al inicio", next: "start" }
+      ],
+      budget: [
+        { label: "Hasta $250M", value: "Presupuesto hasta $250 millones COP", next: "timeframe" },
+        { label: "$250M - $350M", value: "Presupuesto entre $250 y $350 millones COP", next: "timeframe" },
+        { label: "Más de $350M", value: "Presupuesto superior a $350 millones COP", next: "timeframe" },
+        { label: "No definido", value: "Aún no tengo presupuesto definido", next: "timeframe" }
+      ],
+      timeframe: [
+        { label: "Inmediata", value: "Compra inmediata", next: "contact" },
+        { label: "1 a 3 meses", value: "Compra en 1 a 3 meses", next: "contact" },
+        { label: "Explorando", value: "Solo estoy explorando", next: "contact" },
+        { label: "Inicio", value: "Volver al inicio", next: "start" }
+      ],
+      contact: [
+        { label: "Dejar mis datos", value: "Quiero dejar mis datos", next: "end", primary: true },
+        { label: "Agendar asesor", value: "Agendar contacto con asesor", next: "end", primary: true },
+        { label: "Inicio", value: "Volver al inicio", next: "start" }
+      ],
+      end: [
+        { label: "Nueva consulta", value: "Iniciar otra consulta", next: "start" }
+      ]
+    };
+
+    const stepIntro = {
+      start: "Hola. Soy tu asesor virtual. ¿Qué estás buscando?",
+      interest: "Perfecto. También puedes contarme un poco más o elegir una de estas opciones.",
+      budget: "Entendido. ¿Cuál es tu presupuesto aproximado?",
+      timeframe: "Gracias. ¿En qué plazo estás pensando comprar?",
+      contact: "Con esta información ya podemos orientar mejor la asesoría.",
+      end: "Gracias. Un asesor podrá continuar con tu solicitud."
+    };
+
+    const chatLauncher = document.getElementById("chatLauncher");
+    const chatWindow = document.getElementById("chatWindow");
+    const chatClose = document.getElementById("chatClose");
+    const chatReset = document.getElementById("chatReset");
+    const chatMessages = document.getElementById("chatMessages");
+    const quickReplies = document.getElementById("quickReplies");
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+
+    chatLauncher.addEventListener("click", async () => {
+      if (chatWindow.classList.contains("open")) {
+        closeChat();
+      } else {
+        await openChat();
+      }
+    });
+
+    chatClose.addEventListener("click", () => {
+      closeChat();
+    });
+
+    chatReset.addEventListener("click", () => {
+      resetConversation();
+    });
+
+    window.addEventListener("load", async () => {
+      if (state.isOpen) {
+        await openChat();
+      }
+    });
+
+    chatForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      await handleUserMessage(text, state.step, "free_text");
+      chatInput.value = "";
+      keepChatOpen();
+    });
+
+    async function openChat() {
+      chatWindow.classList.add("open");
+      state.isOpen = true;
+      localStorage.setItem(STORAGE_KEYS.open, "true");
+
+      if (!state.hasLoadedSession) {
+        state.hasLoadedSession = true;
+
+        if (state.messages.length > 0) {
+          restoreMessages();
+        } else {
+          addMessage("bot", stepIntro.start);
+        }
+
+        renderInitialQuickReplies();
+
+        if (LOAD_PREVIOUS_SESSION) {
+          await loadPreviousSession();
+        }
+      }
+
+      setTimeout(() => chatInput.focus(), 50);
+    }
+
+    function closeChat() {
+      chatWindow.classList.remove("open");
+      state.isOpen = false;
+      localStorage.setItem(STORAGE_KEYS.open, "false");
+    }
+
+    function keepChatOpen() {
+      chatWindow.classList.add("open");
+      state.isOpen = true;
+      localStorage.setItem(STORAGE_KEYS.open, "true");
+    }
+
+
+    function renderQuickReplies(replies = []) {
+      quickReplies.innerHTML = "";
+
+      if (!Array.isArray(replies) || replies.length === 0) {
+        quickReplies.style.display = "none";
+        return;
+      }
+
+      quickReplies.style.display = "flex";
+
+      replies.slice(0, 4).forEach((reply, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "quick-reply" + (index === 0 ? " primary" : "");
+        button.textContent = reply;
+
+        button.addEventListener("click", async () => {
+          quickReplies.innerHTML = "";
+          quickReplies.style.display = "none";
+
+          await handleUserMessage(
+            reply,
+            "dynamic",
+            "quick_reply",
+            {
+              selectedLabel: reply
+            },
+            reply
+          );
+
+          keepChatOpen();
+        });
+
+        quickReplies.appendChild(button);
+      });
+    }
+
+
+
+    async function handleUserMessage(text, nextStep, inputType, extraMetadata = {}, displayText = null) {
+      const currentStep = extraMetadata.previousStep || state.step;
+      const userDisplay = displayText || text;
+
+      addMessage("user", userDisplay);
+      addToConversationHistory("user", text);
+
+      addMessage("bot", "Procesando...", false);
+
+      try {
+        const payload = {
+          // Compatibilidad con el flujo n8n anterior
+          action: "sendMessage",
+          sessionId: state.sessionId,
+          route: ROUTE,
+          chatInput: text,
+
+          // Compatibilidad con Normalize Input / FastAPI actual
+          session_id: state.sessionId,
+          message: text,
+          lead_state: state.leadState || {},
+          conversation_history: state.conversationHistory.slice(-10),
+          catalog_context: "",
+
+          metadata: {
+            source: "widgetvolvo",
+            userId: "",
+            mode: "hybrid_input_and_quick_replies",
+            inputType: inputType,
+            currentStep: currentStep,
+            nextStep: nextStep,
+            ...extraMetadata
+          }
+        };
+
+        const data = await postToN8n(payload);
+
+        removeProcessingMessage();
+
+        const output = extractOutput(data);
+
+        if (output) {
+          addMessage("bot", output);
+          addToConversationHistory("assistant", output);
+        }
+
+        mergeLeadState(extractUpdatedLeadState(data));
+
+        const backendQuickReplies = extractQuickReplies(data);
+        renderQuickReplies(backendQuickReplies);
+
+        persistState();
+        keepChatOpen();
+
+        return output;
+
+      } catch (error) {
+        removeProcessingMessage();
+        console.error("Widget error:", error);
+        addMessage("system", "No se pudo conectar con n8n. Verifica que el workflow esté activo y que la URL del webhook sea correcta.");
+        keepChatOpen();
+        return "";
+      }
+    }
+
+    async function loadPreviousSession() {
+      const payload = {
+        action: "loadPreviousSession",
+        sessionId: state.sessionId,
+        session_id: state.sessionId,
+        route: ROUTE,
+        chatInput: "",
+        message: "",
+        lead_state: state.leadState || {},
+        conversation_history: state.conversationHistory.slice(-10),
+        catalog_context: "",
+        metadata: {
+          source: "widgetvolvo",
+          userId: "",
+          mode: "hybrid_input_and_quick_replies"
+        }
+      };
+
+      try {
+        const data = await postToN8n(payload);
+        const output = extractOutput(data);
+
+        if (output) {
+          addMessage("bot", output);
+          addToConversationHistory("assistant", output);
+        }
+
+        mergeLeadState(extractUpdatedLeadState(data));
+        persistState();
+        keepChatOpen();
+
+        return output;
+      } catch (error) {
+        return "";
+      }
+    }
+
+    async function postToN8n(payload) {
+      const response = await fetch(state.webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error("HTTP " + response.status + ": " + errorText);
+      }
+
+      const text = await response.text();
+
+      if (!text) {
+        return {};
+      }
+
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { output: text };
+      }
+    }
+
+    function extractOutput(data) {
+      if (!data) return "";
+
+      if (typeof data === "string") {
+        return data;
+      }
+
+      if (Array.isArray(data)) {
+        return extractOutput(data[0]);
+      }
+
+      return (
+        data.assistant_reply ||
+        data.output ||
+        data.reply ||
+        data.message ||
+        data.response ||
+        data.text ||
+        data.answer ||
+        data.json?.assistant_reply ||
+        data.json?.output ||
+        data.json?.reply ||
+        data.json?.message ||
+        data.json?.response ||
+        data.data?.assistant_reply ||
+        data.data?.output ||
+        data.body?.assistant_reply ||
+        data.body?.output ||
+        ""
+      );
+    }
+
+    function extractUpdatedLeadState(data) {
+      if (!data) return {};
+
+      if (Array.isArray(data)) {
+        return extractUpdatedLeadState(data[0]);
+      }
+
+      return (
+        data.updated_lead_state ||
+        data.lead_state ||
+        data.json?.updated_lead_state ||
+        data.data?.updated_lead_state ||
+        data.body?.updated_lead_state ||
+        {}
+      );
+    }
+
+    function extractQuickReplies(data) {
+      if (!data) return [];
+
+      if (Array.isArray(data)) {
+        return extractQuickReplies(data[0]);
+      }
+
+      const replies =
+        data.quick_replies ||
+        data.quickReplies ||
+        data.json?.quick_replies ||
+        data.data?.quick_replies ||
+        data.body?.quick_replies ||
+        [];
+
+      if (!Array.isArray(replies)) {
+        return [];
+      }
+
+      return replies
+        .map(reply => String(reply || "").trim())
+        .filter(reply => reply)
+        .slice(0, 4);
+    }
+
+
+    function mergeLeadState(updatedLeadState) {
+      if (!updatedLeadState || typeof updatedLeadState !== "object") {
+        return;
+      }
+
+      Object.entries(updatedLeadState).forEach(([key, value]) => {
+        const hasValue =
+          value !== "" &&
+          value !== null &&
+          value !== undefined &&
+          !(Array.isArray(value) && value.length === 0);
+
+        if (hasValue) {
+          state.leadState[key] = value;
+        }
+      });
+
+      localStorage.setItem(STORAGE_KEYS.leadState, JSON.stringify(state.leadState));
+    }
+
+    function addMessage(type, text, persist = true) {
+      const message = document.createElement("div");
+      message.className = "message " + type;
+      message.textContent = text;
+      chatMessages.appendChild(message);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      if (persist && text !== "Procesando...") {
+        state.messages.push({ type, text });
+        state.messages = state.messages.slice(-60);
+        localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(state.messages));
+      }
+    }
+
+    function restoreMessages() {
+      chatMessages.innerHTML = "";
+      state.messages.forEach((item) => {
+        addMessage(item.type, item.text, false);
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addToConversationHistory(role, content) {
+      state.conversationHistory.push({ role, content });
+      state.conversationHistory = state.conversationHistory.slice(-14);
+      localStorage.setItem(STORAGE_KEYS.conversationHistory, JSON.stringify(state.conversationHistory));
+    }
+
+    function persistState() {
+      localStorage.setItem(STORAGE_KEYS.conversationHistory, JSON.stringify(state.conversationHistory.slice(-14)));
+      localStorage.setItem(STORAGE_KEYS.leadState, JSON.stringify(state.leadState || {}));
+      localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(state.messages.slice(-60)));
+      localStorage.setItem(STORAGE_KEYS.sessionId, state.sessionId);
+      localStorage.setItem(STORAGE_KEYS.step, state.step);
+    }
+
+    function getStoredMessages() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.messages)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function getStoredConversationHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.conversationHistory)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function getStoredLeadState() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.leadState)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function resetConversation() {
+      localStorage.removeItem(STORAGE_KEYS.messages);
+      localStorage.removeItem(STORAGE_KEYS.step);
+      localStorage.removeItem(STORAGE_KEYS.sessionId);
+      localStorage.removeItem(STORAGE_KEYS.leadState);
+      localStorage.removeItem(STORAGE_KEYS.conversationHistory);
+
+      state.messages = [];
+      state.conversationHistory = [];
+      state.leadState = {};
+      state.step = "start";
+      state.hasLoadedSession = true;
+
+      state.sessionId = crypto.randomUUID
+        ? crypto.randomUUID()
+        : "session-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+
+      localStorage.setItem(STORAGE_KEYS.sessionId, state.sessionId);
+      localStorage.setItem(STORAGE_KEYS.step, "start");
+      localStorage.setItem(STORAGE_KEYS.open, "true");
+
+      chatMessages.replaceChildren();
+      quickReplies.replaceChildren();
+
+      addMessage("bot", stepIntro.start);
+      renderInitialQuickReplies();
+      keepChatOpen();
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      setTimeout(() => chatInput.focus(), 50);
+    }
+
+    function renderInitialQuickReplies() {
+      const initialReplies = [
+        "SUV eléctrico",
+        "Híbrido enchufable",
+        "Agendar visita",
+        "Hablar con asesor"
+      ];
+
+      renderQuickReplies(initialReplies);
+    }
+
+
+    function removeProcessingMessage() {
+      const botMessages = Array.from(chatMessages.querySelectorAll(".message.bot"));
+      const lastBotMessage = botMessages[botMessages.length - 1];
+
+      if (lastBotMessage && lastBotMessage.textContent === "Procesando...") {
+        lastBotMessage.remove();
+      }
+    }
+
+    window.addEventListener("error", (event) => {
+      console.error("Widget error:", event.error || event.message);
+    });
+
+    function getOrCreateSessionId() {
+      let sessionId = localStorage.getItem(STORAGE_KEYS.sessionId);
+
+      if (!sessionId) {
+        sessionId = crypto.randomUUID
+          ? crypto.randomUUID()
+          : "session-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+
+        localStorage.setItem(STORAGE_KEYS.sessionId, sessionId);
+      }
+
+      return sessionId;
+    }
+  </script>
+</body>
+</html>

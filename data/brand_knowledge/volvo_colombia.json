@@ -1,0 +1,142 @@
+{
+  "brand": "Volvo",
+  "market": "Colombia",
+  "topics": [
+
+    {
+      "topic": "seguridad integral",
+      "keywords": ["seguridad", "seguro", "protección", "accidente", "colisión", "familia"],
+      "content": [
+        "Volvo diseña sus vehículos pensando en la seguridad en condiciones reales, no solo en pruebas de laboratorio.",
+        "Desde 1970, Volvo utiliza datos de accidentes reales para mejorar continuamente sus sistemas de seguridad.",
+        "El objetivo es crear un espacio seguro dentro y alrededor del vehículo.",
+        "Volvo destaca el cinturón de seguridad de tres puntos y estima que compartir esa patente ayudó a salvar más de un millón de vidas.",
+        "Algunas funciones pueden variar según modelo, versión y mercado."
+      ]
+    },
+
+    {
+      "topic": "seguridad estructural y protección",
+      "keywords": ["choque", "impacto", "estructura", "jaula", "protección"],
+      "content": [
+        "Los vehículos Volvo incluyen una jaula de seguridad de acero de alta resistencia para proteger a los ocupantes.",
+        "Las zonas de deformación absorben la energía del impacto para reducir lesiones.",
+        "Los vehículos están diseñados para enfrentar escenarios reales como colisiones múltiples y vuelcos.",
+        "El diseño protege a ocupantes de diferentes tamaños, posiciones y edades."
+      ]
+    },
+
+    {
+      "topic": "tecnologia de seguridad activa",
+      "keywords": ["sensores", "asistencia", "blis", "cámara", "seguridad activa"],
+      "content": [
+        "Volvo integra cámaras, radares y sensores ultrasónicos para monitorear el entorno en tiempo real.",
+        "Incluye prevención de colisiones con vehículos, peatones, ciclistas y animales grandes.",
+        "Sistemas como BLIS, alerta de tráfico cruzado y asistencia de carril ayudan a evitar accidentes.",
+        "Algunos sistemas pueden intervenir automáticamente con frenado o dirección."
+      ]
+    },
+
+    {
+      "topic": "seguridad infantil y ocupantes",
+      "keywords": ["bebé", "niños", "familia", "ocupantes", "asiento infantil"],
+      "content": [
+        "Volvo ha sido pionero en seguridad infantil desde 1972.",
+        "Recomienda el uso de asientos orientados hacia atrás hasta al menos los 4 años.",
+        "Estos asientos ayudan a proteger cabeza y cuello distribuyendo mejor las fuerzas en un accidente.",
+        "Los sistemas de retención infantil son diseñados y probados dentro de vehículos reales.",
+        "Algunos modelos incluyen detección de ocupantes capaz de identificar movimientos muy pequeños como la respiración de un bebé.",
+        "La disponibilidad de estas funciones depende del modelo."
+      ]
+    },
+
+    {
+      "topic": "tecnologia de baterias",
+      "keywords": ["batería", "eléctrico", "autonomía", "cómo funciona"],
+      "content": [
+        "Los vehículos eléctricos Volvo utilizan baterías de iones de litio diseñadas para eficiencia, seguridad y durabilidad.",
+        "Las baterías están compuestas por celdas, módulos y paquetes controlados por sistemas inteligentes.",
+        "Se utilizan tecnologías como NMC para mayor autonomía y LFP para mayor durabilidad.",
+        "El diseño busca equilibrio entre rendimiento, eficiencia y vida útil."
+      ]
+    },
+
+    {
+      "topic": "seguridad de baterias",
+      "keywords": ["batería segura", "seguridad eléctrico", "riesgo batería"],
+      "content": [
+        "Las baterías están integradas en la estructura del vehículo para mayor protección.",
+        "Se ubican bajo el piso para mejorar estabilidad y seguridad.",
+        "Incluyen sistemas de gestión térmica para evitar sobrecalentamiento.",
+        "El diseño protege la batería en distintos tipos de colisión."
+      ]
+    },
+
+    {
+      "topic": "vida util bateria",
+      "keywords": ["duración batería", "vida útil", "degradación"],
+      "content": [
+        "Las baterías están diseñadas para durar más de 15 años o aproximadamente 300.000 km.",
+        "Es normal una ligera pérdida de capacidad con el tiempo.",
+        "Factores como temperatura, carga y conducción influyen en su desgaste.",
+        "Volvo incluye monitoreo para optimizar su rendimiento."
+      ]
+    },
+
+    {
+      "topic": "autonomia electrico",
+      "keywords": ["autonomía", "cuántos km", "rango"],
+      "content": [
+        "La autonomía depende del modelo, el estilo de conducción y condiciones externas.",
+        "Factores como clima, carga del vehículo y terreno influyen en el consumo.",
+        "El vehículo ajusta la autonomía en tiempo real.",
+        "Herramientas como Google Maps ayudan a planear rutas eficientes."
+      ]
+    },
+
+    {
+      "topic": "carga y uso electrico",
+      "keywords": ["cargar", "dónde cargar", "carga casa", "carga viaje"],
+      "content": [
+        "Los vehículos eléctricos Volvo pueden cargarse en casa o en estaciones públicas.",
+        "La carga en casa suele ser más económica y conveniente.",
+        "Los cargadores rápidos permiten recuperar autonomía en viajes largos.",
+        "Aplicaciones y navegación ayudan a ubicar estaciones y planificar rutas."
+      ]
+    },
+
+    {
+      "topic": "experiencia electrico",
+      "keywords": ["es difícil", "complicado", "usar eléctrico"],
+      "content": [
+        "Los vehículos eléctricos Volvo están diseñados para simplificar la conducción diaria.",
+        "Requieren menos mantenimiento que un vehículo tradicional.",
+        "No necesitan cambios de aceite ni sistemas complejos de combustión.",
+        "Muchos usuarios encuentran la experiencia más simple que un vehículo convencional."
+      ]
+    },
+
+    {
+      "topic": "mitos electrico",
+      "keywords": ["mito", "no sirve", "problemas eléctrico"],
+      "content": [
+        "Existen mitos sobre autonomía, carga y uso de vehículos eléctricos.",
+        "En la práctica, estos vehículos están diseñados para uso diario y viajes.",
+        "Las herramientas de planificación facilitan la experiencia.",
+        "La transición a eléctrico suele ser más sencilla de lo esperado."
+      ]
+    },
+
+    {
+      "topic": "tipos electrificacion",
+      "keywords": ["eléctrico", "híbrido", "diferencia"],
+      "content": [
+        "Volvo ofrece vehículos totalmente eléctricos que funcionan solo con electricidad.",
+        "También ofrece híbridos enchufables que combinan motor eléctrico y combustión.",
+        "Los eléctricos son ideales para ciudad, los híbridos para uso mixto.",
+        "La elección depende del estilo de vida del cliente."
+      ]
+    }
+
+  ]
+}
