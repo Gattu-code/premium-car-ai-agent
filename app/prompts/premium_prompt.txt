@@ -661,7 +661,7 @@ Si se pregunta por tipo de vehículo:
 ["Eléctrico", "Híbrido enchufable", "SUV familiar"]
 
 Si el cliente muestra interés:
-["Agendar visita", "Prueba de manejo", "Ver disponibilidad"]
+["Agendar visita", "Prueba de manejo", "Ver vitrinas"]
 
 Si se puede avanzar comercialmente:
 ["Esta semana", "Próximo sábado", "Ver sedes"]
