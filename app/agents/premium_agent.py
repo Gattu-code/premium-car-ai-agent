@@ -676,9 +676,11 @@ REGLAS INTERNAS RECUPERADAS:
         
     # -----------------------------
     # 10. Ajuste de respuesta comercial
-    # -----------------------------
-    # Si el backend detecta que falta información de contacto,
-    # mantenemos la intención comercial sin sonar genérico ni robótico.
+    #- request_contact_info
+    #- request_lead_name
+    #Dealer obligatorio antes de confirmar cita
+    #Persistencia del lead
+    
     missing_contact_fields = []
 
     if not lead.phone:
@@ -701,6 +703,22 @@ REGLAS INTERNAS RECUPERADAS:
         parsed["quick_replies"] = []
         parsed.setdefault("updated_lead_state", lead.model_dump())
         parsed["updated_lead_state"]["pending_questions"] = []
+
+    # -----------------------------
+    # Solicitud de nombre antes de confirmar cita
+    # -----------------------------
+    # Si ya tenemos los datos principales de la visita,
+    # pero falta el nombre del cliente, no confirmamos todavía.
+    if parsed.get("next_action") == "request_lead_name":
+        parsed["assistant_reply"] = (
+            "Perfecto, ya tengo los datos principales de la visita. "
+            "¿Me confirmas tu nombre para dejarla registrada correctamente?"
+        )
+
+        parsed["quick_replies"] = []
+        parsed.setdefault("updated_lead_state", lead.model_dump())
+        parsed["updated_lead_state"]["pending_questions"] = []        
+        
 
     # -----------------------------
     # Dealer obligatorio antes de confirmar cita

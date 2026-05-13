@@ -23,6 +23,8 @@ from typing import Optional
 
 from app.models.lead_model import LeadModel
 from app.services.date_normalizer import normalize_appointment_date
+from app.services.date_normalizer import normalize_text
+
 
 
 # =========================
@@ -104,6 +106,56 @@ def normalize_budget_range(raw_budget: Optional[str]) -> Optional[str]:
     # -------------------------
     return raw_budget
 
+def clean_purchase_timeframe_if_appointment_date(lead):
+    """
+    Limpia purchase_timeframe cuando el LLM guardó allí una fecha de visita.
+
+    Ejemplo incorrecto:
+    - purchase_timeframe = "este sábado"
+    - appointment_date = "2026-05-16"
+
+    En ese caso, "este sábado" corresponde a la cita, no a la intención de compra.
+    """
+
+    if not getattr(lead, "purchase_timeframe", None):
+        return lead
+
+    if not getattr(lead, "appointment_date", None):
+        return lead
+
+    normalized_timeframe = normalize_text(lead.purchase_timeframe)
+
+    appointment_date_terms = [
+        "hoy",
+        "manana",
+        "pasado manana",
+        "lunes",
+        "martes",
+        "miercoles",
+        "jueves",
+        "viernes",
+        "sabado",
+        "domingo",
+        "este lunes",
+        "este martes",
+        "este miercoles",
+        "este jueves",
+        "este viernes",
+        "este sabado",
+        "este domingo",
+        "proximo lunes",
+        "proximo martes",
+        "proximo miercoles",
+        "proximo jueves",
+        "proximo viernes",
+        "proximo sabado",
+        "proximo domingo",
+    ]
+
+    if normalized_timeframe in appointment_date_terms:
+        lead.purchase_timeframe = ""
+
+    return lead
 
 # =========================
 # NORMALIZACIÓN COMPLETA DEL LEAD
@@ -149,5 +201,7 @@ def normalize_lead(lead: LeadModel) -> LeadModel:
 
         if normalized_date.get("iso_date"):
             lead.appointment_date_iso = normalized_date["iso_date"]
+    
+    lead = clean_purchase_timeframe_if_appointment_date(lead)
             
     return lead
