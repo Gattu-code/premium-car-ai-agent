@@ -76,15 +76,6 @@ def next_weekday(
     - "martes", "este martes" o "próximo martes" se interpretan como
       el primer martes que sigue.
     - Si hoy es martes, se interpreta como el martes de la siguiente semana.
-
-    Args:
-        today: fecha actual.
-        target_weekday: lunes=0 ... domingo=6.
-        force_next_week: se conserva por compatibilidad, pero no fuerza
-        una semana adicional en esta versión.
-
-    Returns:
-        date: fecha calculada.
     """
     days_ahead = target_weekday - today.weekday()
 
@@ -92,7 +83,6 @@ def next_weekday(
         days_ahead += 7
 
     return today + timedelta(days=days_ahead)
-
 
 
 def parse_iso_date(text: str) -> Optional[date]:
@@ -117,17 +107,13 @@ def normalize_appointment_date(
     """
     Normaliza una fecha de cita escrita por el cliente o por el LLM.
 
-    Args:
-        value: texto de fecha, por ejemplo "mañana", "martes", "próximo sábado".
-        now: fecha/hora opcional para pruebas.
-
     Returns:
         Dict con:
-        - raw: texto original
-        - iso_date: fecha normalizada YYYY-MM-DD o ""
-        - display_date: texto amigable
-        - confidence: high | medium | low
-        - reason: explicación corta
+        - raw
+        - iso_date
+        - display_date
+        - confidence
+        - reason
     """
     raw = str(value or "").strip()
 
@@ -143,9 +129,7 @@ def normalize_appointment_date(
     today = get_today(now)
     text = normalize_text(raw)
 
-    # -----------------------------
     # Fecha ISO directa
-    # -----------------------------
     iso = parse_iso_date(text)
     if iso:
         return {
@@ -156,9 +140,7 @@ def normalize_appointment_date(
             "reason": "ISO date detected.",
         }
 
-    # -----------------------------
     # Fechas relativas simples
-    # -----------------------------
     if "hoy" in text:
         target = today
         return {
@@ -189,9 +171,7 @@ def normalize_appointment_date(
             "reason": "Relative date: tomorrow.",
         }
 
-    # -----------------------------
     # Días de la semana
-    # -----------------------------
     force_next_week = (
         "proximo" in text
         or "proxima" in text
@@ -216,13 +196,76 @@ def normalize_appointment_date(
                 "reason": f"Weekday detected: {day_name}.",
             }
 
-    # -----------------------------
-    # No se pudo interpretar
-    # -----------------------------
     return {
         "raw": raw,
         "iso_date": "",
         "display_date": raw,
         "confidence": "low",
         "reason": "Could not normalize appointment date.",
+    }
+
+
+def message_has_relative_date(text: str) -> bool:
+    """
+    Detecta si un texto contiene una fecha relativa o un día de la semana.
+    """
+    normalized = normalize_text(text)
+
+    date_terms = [
+        "hoy",
+        "manana",
+        "pasado manana",
+        "lunes",
+        "martes",
+        "miercoles",
+        "jueves",
+        "viernes",
+        "sabado",
+        "domingo",
+        "proximo",
+        "proxima",
+        "siguiente",
+    ]
+
+    return any(term in normalized for term in date_terms)
+
+
+def resolve_appointment_date(
+    user_message: str,
+    current_appointment_date: str,
+    now: datetime,
+) -> Dict[str, Any]:
+    """
+    Resuelve la fecha de cita priorizando el mensaje actual del usuario
+    cuando contiene una fecha relativa.
+
+    Esto evita conservar una fecha ISO mal calculada por el LLM.
+    """
+    sources = []
+
+    if message_has_relative_date(user_message):
+        sources.append(user_message)
+
+    if current_appointment_date:
+        sources.append(current_appointment_date)
+
+    for source in sources:
+        normalized = normalize_appointment_date(
+            value=source,
+            now=now,
+        )
+
+        if normalized.get("iso_date"):
+            return {
+                **normalized,
+                "source": source,
+            }
+
+    return {
+        "raw": "",
+        "iso_date": "",
+        "display_date": "",
+        "confidence": "low",
+        "reason": "no_date_detected",
+        "source": None,
     }

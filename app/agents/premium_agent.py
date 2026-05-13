@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from app.services.date_normalizer import resolve_appointment_date
 from app.services.ai_provider import generate_ai_response
 from app.models.lead_model import LeadModel
 from app.services.lead_normalizer import normalize_lead
@@ -564,9 +565,28 @@ REGLAS INTERNAS RECUPERADAS:
     lead = LeadModel(**lead_state)
     lead.update_from_dict(updated_state)
 
+    # Normalización determinística de fecha de cita
+    # Normalización determinística de fecha de cita
+    normalized_date = resolve_appointment_date(
+        user_message=user_message,
+        current_appointment_date=lead.appointment_date,
+        now=now_bogota,
+    )
+
+    if normalized_date.get("iso_date"):
+        lead.appointment_date = normalized_date["iso_date"]
+
+        if hasattr(lead, "appointment_date_iso"):
+            lead.appointment_date_iso = normalized_date["iso_date"]
+
+        print("========== DATE NORMALIZATION ==========")
+        print("Date source:", normalized_date.get("source"))
+        print("Normalized appointment_date:", normalized_date.get("iso_date"))
+        print("Reason:", normalized_date.get("reason"))
+        print("========================================")
+
     # Primera evaluación del estado comercial
     lead.refresh_business_state()
-
     # -----------------------------
     # 7. Normalización de negocio
     # -----------------------------
