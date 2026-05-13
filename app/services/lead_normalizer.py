@@ -23,9 +23,24 @@ from typing import Optional
 
 from app.models.lead_model import LeadModel
 from app.services.date_normalizer import normalize_appointment_date
+from app.services.contact_validation_service import normalize_contact_fields
 from app.services.date_normalizer import normalize_text
 
 
+def clean_lead_name_if_derived_from_email(lead):
+    if not getattr(lead, "lead_name", None):
+        return lead
+
+    if not getattr(lead, "email", None):
+        return lead
+
+    email_user = str(lead.email).split("@")[0].strip().lower()
+    lead_name = str(lead.lead_name).strip().lower()
+
+    if lead_name == email_user:
+        lead.lead_name = ""
+
+    return lead
 
 # =========================
 # NORMALIZACIÓN DE PRESUPUESTO
@@ -185,7 +200,9 @@ def normalize_lead(lead: LeadModel) -> LeadModel:
         LeadModel:
             Lead con valores estandarizados.
     """
-
+    lead = normalize_contact_fields(lead)        
+    lead = clean_lead_name_if_derived_from_email(lead)
+    
     # Normalizar presupuesto
     lead.budget_range = normalize_budget_range(lead.budget_range)
     
@@ -203,5 +220,5 @@ def normalize_lead(lead: LeadModel) -> LeadModel:
             lead.appointment_date_iso = normalized_date["iso_date"]
     
     lead = clean_purchase_timeframe_if_appointment_date(lead)
-            
+    
     return lead

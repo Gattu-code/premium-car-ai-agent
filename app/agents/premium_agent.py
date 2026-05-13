@@ -24,6 +24,7 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from app.services.date_normalizer import resolve_appointment_date, normalize_text
+from app.services.contact_validation_service import get_invalid_contact_fields
 from app.services.ai_provider import generate_ai_response
 from app.models.lead_model import LeadModel
 from app.services.lead_normalizer import normalize_lead
@@ -676,10 +677,12 @@ REGLAS INTERNAS RECUPERADAS:
         
     # -----------------------------
     # 10. Ajuste de respuesta comercial
-    #- request_contact_info
-    #- request_lead_name
-    #Dealer obligatorio antes de confirmar cita
-    #Persistencia del lead
+    # -----------------------------
+    # El backend puede sobrescribir la respuesta del LLM cuando detecta:
+    # - falta de teléfono o correo
+    # - teléfono o correo inválidos
+    # - falta de nombre antes de confirmar cita
+    # - falta de sede específica antes de confirmar cita
     
     missing_contact_fields = []
 
@@ -702,6 +705,28 @@ REGLAS INTERNAS RECUPERADAS:
 
         parsed["quick_replies"] = []
         parsed.setdefault("updated_lead_state", lead.model_dump())
+        parsed["updated_lead_state"]["pending_questions"] = []
+
+    # -----------------------------
+    # Solicitud de corrección de contacto inválido
+    # -----------------------------
+    invalid_contact_fields = get_invalid_contact_fields(lead)
+
+    if parsed.get("next_action") == "request_valid_contact_info" and invalid_contact_fields:
+        if len(invalid_contact_fields) == 2:
+            contact_request = "un número de teléfono completo y un correo electrónico válido"
+        elif invalid_contact_fields[0] == "teléfono":
+            contact_request = "un número de teléfono completo"
+        else:
+            contact_request = "un correo electrónico válido"
+
+        parsed["assistant_reply"] = (
+            f"Gracias. Para confirmar tu visita, ¿me compartes {contact_request}?"
+        )
+
+        parsed["quick_replies"] = []
+        parsed.setdefault("updated_lead_state", lead.model_dump())
+        parsed["updated_lead_state"] = lead.model_dump()
         parsed["updated_lead_state"]["pending_questions"] = []
 
     # -----------------------------

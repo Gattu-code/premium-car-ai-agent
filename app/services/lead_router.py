@@ -10,6 +10,7 @@ para no depender únicamente de la recomendación del modelo.
 """
 
 from app.models.lead_model import LeadModel
+from app.services.contact_validation_service import get_invalid_contact_fields
 
 # Función principal de este módulo: decide la siguiente acción comercial recomendada
 # basada en reglas de negocio aplicadas sobre el estado actual del lead.
@@ -99,6 +100,12 @@ def decide_next_action(lead: LeadModel, current_action: str = "continue_conversa
       continue_conversation
     """
 
+    invalid_contact_fields = get_invalid_contact_fields(lead)
+
+    if lead.interest_type == "visita" and invalid_contact_fields:
+        return "request_valid_contact_info"
+
+
     if appointment_missing_only_name(lead):
         return "request_lead_name"
 
@@ -125,6 +132,7 @@ def decide_next_action(lead: LeadModel, current_action: str = "continue_conversa
     if current_action in [
         "continue_conversation",
         "request_contact_info",
+        "request_valid_contact_info",
         "request_lead_name",
         "send_to_sales_advisor",
         "high_priority_lead",
