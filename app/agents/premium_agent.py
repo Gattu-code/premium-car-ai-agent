@@ -649,6 +649,13 @@ REGLAS INTERNAS RECUPERADAS:
     # Evitamos que la UI muestre una segunda pregunta duplicada.
     parsed.setdefault("updated_lead_state", lead.model_dump())
     parsed["updated_lead_state"]["pending_questions"] = []
+    
+    # -----------------------------
+    # Quick replies temporalmente desactivadas
+    # -----------------------------
+    # Se desactivan globalmente para estabilizar el flujo conversacional.
+    # Mantener este bloque facilita reactivarlas luego sin borrar la lógica.
+    parsed["quick_replies"] = []
 
     save_lead(session_id, parsed["updated_lead_state"])
 
