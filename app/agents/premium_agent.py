@@ -377,6 +377,19 @@ def process_lead_message(
     else:
         catalog_context = build_catalog_context(models)
 
+
+    # -----------------------------
+    # DEBUG: Validación de catálogo
+    # -----------------------------
+    print("========== CATALOG CONTEXT DEBUG ==========")
+    print("Catalog context chars:", len(catalog_context or ""))
+    print("Catalog contains EX30:", "EX30" in (catalog_context or ""))
+    print("Catalog contains EX40:", "EX40" in (catalog_context or ""))
+    print("Catalog contains XC60:", "XC60" in (catalog_context or ""))
+    print("Catalog contains XC90:", "XC90" in (catalog_context or ""))
+    print("Catalog contains autonomía:", "autonomía" in (catalog_context or "").lower() or "autonomia" in (catalog_context or "").lower())
+    print("===========================================")
+
     # -----------------------------
     # 2.4 Contexto interno de negocio
     # -----------------------------
@@ -426,6 +439,28 @@ def process_lead_message(
         rules_context = rag_context.get("rules_context", "")
     else:
         rules_context = ""
+
+
+    # -----------------------------
+    # DEBUG: Validación de contexto estructurado
+    # -----------------------------
+    print("========== STRUCTURED CONTEXT DEBUG ==========")
+
+    print("Brand context chars:", len(brand_context or ""))
+    print("Dealer context chars:", len(dealer_context or ""))
+    print("Rules context chars:", len(rules_context or ""))
+
+    print("Dealer context contains Bogotá:", "Bogotá" in dealer_context or "Bogota" in dealer_context)
+    print("Dealer context contains Ibagué:", "Ibagué" in dealer_context or "Ibague" in dealer_context)
+    print("Dealer context contains Barranquilla:", "Barranquilla" in dealer_context)
+    print("Dealer context contains Re Industrias:", "Re Industrias" in dealer_context)
+    print("Dealer context contains Massy:", "Massy" in dealer_context)
+
+    print("Brand context contains seguridad:", "seguridad" in (brand_context or "").lower())
+    print("Brand context contains electrificación:", "electrificación" in (brand_context or "").lower() or "electrificacion" in (brand_context or "").lower())
+
+    print("=============================================")
+    
 
     # -----------------------------
     # 2.8 Fecha actual del sistema
@@ -494,6 +529,20 @@ REGLAS INTERNAS RECUPERADAS:
         conversation_history=conversation_history,
         context=final_context,
     )
+    
+    # -----------------------------
+    # DEBUG: Guardar último prompt real
+    # -----------------------------
+    print("========== FINAL PROMPT DEBUG ==========")
+    print("Prompt chars:", len(prompt))
+    print("Prompt contains EX30:", "EX30" in prompt)
+    print("Prompt contains XC60:", "XC60" in prompt)
+    print("Prompt contains dealers:", "vitrina" in prompt.lower() or "sede" in prompt.lower())
+    print("Prompt contains brand knowledge:", "seguridad" in prompt.lower())
+    print("========================================")
+
+    with open("data/last_prompt_debug.txt", "w", encoding="utf-8") as f:
+        f.write(prompt)
 
     # -----------------------------
     # 4. Llamada al modelo (LLM)
