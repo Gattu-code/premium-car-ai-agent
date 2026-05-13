@@ -403,7 +403,7 @@ function getQuickReplies(data) {
   return replies
     .map(reply => String(reply || "").trim())
     .filter(reply => reply)
-    .slice(0, 8);
+    .slice(0, 12);
 }
 
 function renderQuickReplies(replies) {

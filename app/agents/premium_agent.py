@@ -550,7 +550,7 @@ REGLAS INTERNAS RECUPERADAS:
         or "ciudades con sede" in assistant_reply_text
         or "vitrinas volvo disponibles" in assistant_reply_text
     ):
-        max_quick_replies = 8
+        max_quick_replies = 12
 
     parsed["quick_replies"] = sanitize_quick_replies(
         parsed.get("quick_replies", []),
