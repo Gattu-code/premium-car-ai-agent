@@ -565,7 +565,20 @@ REGLAS INTERNAS RECUPERADAS:
         current_action=parsed.get("next_action", "continue_conversation"),
     )
 
-    if parsed["next_action"] == "request_contact_info" and missing_contact_fields:
+    # -----------------------------
+    # 10. Ajuste de respuesta comercial
+    # -----------------------------
+    # Si el backend detecta que falta información de contacto,
+    # mantenemos la intención comercial sin sonar genérico ni robótico.
+    missing_contact_fields = []
+
+    if not lead.phone:
+        missing_contact_fields.append("teléfono")
+
+    if not lead.email:
+        missing_contact_fields.append("correo electrónico")
+
+    if parsed.get("next_action") == "request_contact_info" and missing_contact_fields:
         if len(missing_contact_fields) == 2:
             contact_request = "tu número de teléfono y correo electrónico"
         else:
@@ -577,6 +590,7 @@ REGLAS INTERNAS RECUPERADAS:
         ).replace("  ", " ").strip()
 
         parsed["quick_replies"] = []
+        parsed.setdefault("updated_lead_state", lead.model_dump())
         parsed["updated_lead_state"]["pending_questions"] = []
 
     # -----------------------------
@@ -612,26 +626,30 @@ REGLAS INTERNAS RECUPERADAS:
                 if dealer_name and dealer_name not in dealer_names:
                     dealer_names.append(dealer_name)
 
-        parsed["assistant_reply"] = (
-            f"Perfecto, {lead.lead_name or ''}. Antes de confirmar tu visita, "
-            f"¿en cuál sede te gustaría conocer el vehículo en {city}?"
-        ).replace("  ", " ").strip()
+        if dealer_names:
+            parsed["assistant_reply"] = (
+                f"Perfecto, {lead.lead_name or ''}. Antes de confirmar tu visita, "
+                f"¿en cuál sede te gustaría conocer el vehículo en {city}?"
+            ).replace("  ", " ").strip()
 
-        parsed["quick_replies"] = dealer_names[:4]
-        parsed["next_action"] = "dealer_selection_required"
-        parsed["updated_lead_state"]["pending_questions"] = []
-        
-        
+            parsed["quick_replies"] = dealer_names[:6]
+            parsed["next_action"] = "dealer_selection_required"
+            parsed.setdefault("updated_lead_state", lead.model_dump())
+            parsed["updated_lead_state"]["pending_questions"] = []
+
     # -----------------------------
     # 11. Persistencia del lead
     # -----------------------------
     # Guardamos cada interacción para mantener trazabilidad por conversación.
+
     # -----------------------------
     # Limpieza de preguntas pendientes
     # -----------------------------
     # La respuesta visible ya va en assistant_reply.
     # Evitamos que la UI muestre una segunda pregunta duplicada.
+    parsed.setdefault("updated_lead_state", lead.model_dump())
     parsed["updated_lead_state"]["pending_questions"] = []
+
     save_lead(session_id, parsed["updated_lead_state"])
 
     # -----------------------------
