@@ -187,7 +187,7 @@ def sanitize_quick_replies(value) -> list[str]:
 
     Reglas:
     - Deben ser lista.
-    - Máximo 4 opciones.
+    - Máximo 6 opciones.
     - Cada opción debe ser texto corto.
     - Se eliminan vacíos y duplicados.
     """
@@ -214,7 +214,7 @@ def sanitize_quick_replies(value) -> list[str]:
         seen.add(key)
         cleaned.append(text)
 
-        if len(cleaned) >= 4:
+        if len(cleaned) >= 6:
             break
 
     return cleaned
