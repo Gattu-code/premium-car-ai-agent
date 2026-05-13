@@ -181,13 +181,13 @@ def safe_parse_json(raw_text: str) -> Dict[str, Any]:
 
         raise ValueError("La respuesta del modelo no contiene JSON válido.")
 
-def sanitize_quick_replies(value) -> list[str]:
+def sanitize_quick_replies(value, max_items: int = 8) -> list[str]:
     """
     Normaliza y valida las respuestas rápidas generadas por el LLM.
 
     Reglas:
     - Deben ser lista.
-    - Máximo 6 opciones.
+    - Máximo configurable de opciones.
     - Cada opción debe ser texto corto.
     - Se eliminan vacíos y duplicados.
     """
@@ -214,7 +214,7 @@ def sanitize_quick_replies(value) -> list[str]:
         seen.add(key)
         cleaned.append(text)
 
-        if len(cleaned) >= 6:
+        if len(cleaned) >= max_items:
             break
 
     return cleaned
@@ -536,8 +536,25 @@ REGLAS INTERNAS RECUPERADAS:
     # -----------------------------
     # El LLM puede sugerir respuestas rápidas contextuales.
     # El backend las sanitiza para evitar ruido, duplicados o textos largos.
+    max_quick_replies = 6
+
+    assistant_reply_text = (parsed.get("assistant_reply") or "").lower()
+    next_action = parsed.get("next_action") or ""
+
+    if (
+        next_action in [
+            "dealer_city_selection_required",
+            "dealer_selection_required",
+        ]
+        or "ciudades con vitrinas" in assistant_reply_text
+        or "ciudades con sede" in assistant_reply_text
+        or "vitrinas volvo disponibles" in assistant_reply_text
+    ):
+        max_quick_replies = 8
+
     parsed["quick_replies"] = sanitize_quick_replies(
-        parsed.get("quick_replies", [])
+        parsed.get("quick_replies", []),
+        max_items=max_quick_replies,
     )
 
     # -----------------------------
