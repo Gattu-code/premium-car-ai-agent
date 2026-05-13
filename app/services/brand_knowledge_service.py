@@ -145,7 +145,7 @@ def get_brand_knowledge_list(
             {
                 "topic": topic.get("topic", ""),
                 "keywords": topic.get("keywords", []),
-                "content": " ".join(topic.get("content", [])),
+                "content": topic.get("content", []),
             }
         )
 
@@ -215,6 +215,12 @@ def build_brand_context_for_prompt(
         keywords = topic.get("keywords", [])
         content = topic.get("content", [])
 
+        if isinstance(content, str):
+            content = [content]
+
+        if not isinstance(content, list):
+            content = [str(content)]
+            
         if topic_name:
             lines.append(f"\nTema: {topic_name}")
 

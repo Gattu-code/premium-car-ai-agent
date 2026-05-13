@@ -14,6 +14,9 @@ Para APIs externas:
 """
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 CATALOG_BRAND = "volvo"
 CATALOG_MARKET = "colombia"
