@@ -13,3 +13,6 @@ data/*.json
 
 
 data/*.json
+
+data/last_prompt_debug.txt
+data/*debug*.txt

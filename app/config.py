@@ -48,7 +48,7 @@ EXTERNAL_LLM_PROVIDER = "openrouter"
 # google/gemini-2.5-flash
 # deepseek/deepseek-v3.2
 # openai/gpt-4o-mini
-
+#Este es el fallback general, pero cada proveedor puede tener su propio modelo configurado en .env
 EXTERNAL_LLM_MODEL = os.getenv(
     "EXTERNAL_LLM_MODEL",
     "google/gemini-2.5-flash-lite"
