@@ -564,7 +564,80 @@ REGLAS INTERNAS RECUPERADAS:
         lead=lead,
         current_action=parsed.get("next_action", "continue_conversation"),
     )
+    # -----------------------------
+    # 9.1 Ciudad sin vitrina directa
+    # -----------------------------
+    # Si el cliente quiere agendar/visitar/probar,
+    # pero su ciudad no tiene vitrina registrada y aún no hay sede elegida,
+    # no pedimos fecha/hora todavía.
+    # Primero mostramos las ciudades reales con sede disponible.
+    user_message_text = (user_message or "").lower()
+    assistant_reply_text = (parsed.get("assistant_reply") or "").lower()
+    next_action = parsed.get("next_action", "")
 
+    visit_keywords = [
+        "agendar",
+        "visita",
+        "cita",
+        "prueba",
+        "test drive",
+        "verlo",
+        "conocerlo",
+    ]
+
+    wants_visit = (
+        next_action in [
+            "request_contact_info",
+            "schedule_test_drive",
+            "schedule_test_drive_ready",
+            "request_appointment_date",
+            "request_appointment_time",
+        ]
+        or any(keyword in user_message_text for keyword in visit_keywords)
+        or any(keyword in assistant_reply_text for keyword in visit_keywords)
+    )
+
+    appointment_location = lead.appointment_location or {}
+
+    has_appointment_location = (
+        isinstance(appointment_location, dict)
+        and appointment_location.get("city")
+    )
+
+    lead_city = (lead.city or "").strip().lower()
+
+    available_cities = sorted({
+        str(dealer.get("city", "")).strip()
+        for dealer in dealers
+        if isinstance(dealer, dict) and dealer.get("city")
+    })
+
+    city_has_dealer = any(
+        str(dealer.get("city", "")).strip().lower() == lead_city
+        for dealer in dealers
+        if isinstance(dealer, dict)
+    )
+
+    if (
+        wants_visit
+        and lead.city
+        and not city_has_dealer
+        and not has_appointment_location
+        and available_cities
+    ):
+        cities_text = ", ".join(available_cities)
+
+        parsed["assistant_reply"] = (
+            f"Por ahora no veo una vitrina Volvo registrada directamente en {lead.city}. "
+            f"Con gusto podemos ayudarte en una ciudad donde sí tenemos sede disponible: "
+            f"{cities_text}. ¿Cuál te quedaría mejor para coordinar la visita?"
+        ).replace("  ", " ").strip()
+
+        parsed["quick_replies"] = []
+        parsed["next_action"] = "dealer_city_selection_required"
+        parsed.setdefault("updated_lead_state", lead.model_dump())
+        parsed["updated_lead_state"]["pending_questions"] = []
+        
     # -----------------------------
     # 10. Ajuste de respuesta comercial
     # -----------------------------
