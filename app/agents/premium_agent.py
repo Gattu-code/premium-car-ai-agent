@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from app.services.date_normalizer import resolve_appointment_date
+from app.services.date_normalizer import resolve_appointment_date, normalize_text
 from app.services.ai_provider import generate_ai_response
 from app.models.lead_model import LeadModel
 from app.services.lead_normalizer import normalize_lead
@@ -46,6 +46,11 @@ from app.services.catalog_service import (
     load_catalog,
     build_catalog_context,
 )
+from app.services.context_policy_service import (
+    build_context_policy,
+    select_relevant_catalog_models,
+)
+
 from app.utils.debug import debug_prompt
 
 # Ruta del prompt base del agente
@@ -304,8 +309,8 @@ def process_lead_message(
     # - evolucionar fácilmente a RAG con embeddings cuando el volumen crezca
 
     catalog = load_catalog(
-    brand="volvo",
-    market="colombia",
+        brand="volvo",
+        market="colombia",
     )
 
     dealers = get_dealers_list(
@@ -323,6 +328,18 @@ def process_lead_message(
         market="colombia",
     )
 
+    # -----------------------------
+    # 2.1 Política de contexto dinámico
+    # -----------------------------
+    context_policy = build_context_policy(
+        user_message=user_message,
+        lead_state=lead_state,
+        catalog=catalog,
+    )
+
+    print("========== CONTEXT POLICY DEBUG ==========")
+    print("Context policy:", context_policy)
+    print("==========================================")
     # -----------------------------
     # 2.2 Contexto RAG opcional según switches
     # -----------------------------
@@ -368,21 +385,36 @@ def process_lead_message(
         print("RAG V3 DESACTIVADO PARA ESTA RESPUESTA")
         print("USANDO CONTEXTO ESTRUCTURADO")
 
-    # -----------------------------
+     # -----------------------------
     # 2.3 Contexto de catálogo
     # -----------------------------
-    # structured: entrega todo el catálogo activo.
-    # rag: entrega solo los modelos recuperados por embeddings.
+    # structured: entrega catálogo según política dinámica:
+    # - all: catálogo completo cuando el cliente pide opciones/comparación.
+    # - selected: solo modelos relevantes si hay modelo identificado.
+    # - none: sin catálogo cuando no aporta valor.
+    # rag: entrega solo modelos recuperados por embeddings.
     if CATALOG_CONTEXT_MODE == "structured":
-        catalog_context = build_catalog_context(catalog)
+        catalog_mode = context_policy.get("catalog_mode", "all")
+
+        if catalog_mode == "all":
+            catalog_context = build_catalog_context(catalog)
+
+        elif catalog_mode == "selected":
+            selected_catalog_models = select_relevant_catalog_models(
+                catalog=catalog,
+                user_message=user_message,
+                lead_state=lead_state,
+            )
+
+            catalog_context = build_catalog_context(selected_catalog_models)
+
+        else:
+            catalog_context = ""
     else:
         catalog_context = build_catalog_context(models)
-
-
-    # -----------------------------
-    # DEBUG: Validación de catálogo
-    # -----------------------------
+        
     print("========== CATALOG CONTEXT DEBUG ==========")
+    print("Catalog mode:", catalog_mode if CATALOG_CONTEXT_MODE == "structured" else "rag")
     print("Catalog context chars:", len(catalog_context or ""))
     print("Catalog contains EX30:", "EX30" in (catalog_context or ""))
     print("Catalog contains EX40:", "EX40" in (catalog_context or ""))
@@ -390,7 +422,7 @@ def process_lead_message(
     print("Catalog contains XC90:", "XC90" in (catalog_context or ""))
     print("Catalog contains autonomía:", "autonomía" in (catalog_context or "").lower() or "autonomia" in (catalog_context or "").lower())
     print("===========================================")
-
+    
     # -----------------------------
     # 2.4 Contexto interno de negocio
     # -----------------------------
@@ -404,26 +436,34 @@ def process_lead_message(
     # -----------------------------
     # 2.5 Contexto de conocimiento de marca
     # -----------------------------
-    # structured: entrega todo el conocimiento de marca cargado.
+    # structured: entrega brand knowledge solo cuando la política dinámica
+    # detecta una pregunta técnica/de marca donde aporta valor.
     # rag: entrega solo temas recuperados por embeddings.
     if BRAND_CONTEXT_MODE == "structured":
-        brand_context = build_brand_context_for_prompt(
-            brand_knowledge=brand_knowledge,
-        )
+        if context_policy.get("include_brand"):
+            brand_context = build_brand_context_for_prompt(
+                brand_knowledge=brand_knowledge,
+            )
+        else:
+            brand_context = ""
     else:
         brand_context = rag_context.get("brand_context", "")
 
-    # -----------------------------
+     # -----------------------------
     # 2.6 Contexto de concesionarios / sedes
     # -----------------------------
-    # structured: entrega dealers desde JSON completo, priorizando ciudad del lead.
+    # structured: entrega contexto de sedes solo cuando hay intención
+    # de visita, prueba, agendamiento o consulta de vitrinas.
     # rag: entrega solo dealers recuperados por embeddings.
     if DEALER_CONTEXT_MODE == "structured":
-        dealer_context = build_dealer_context_for_prompt(
-            dealers=dealers,
-            lead_state=lead_state,
-            user_message=user_message,
-        )
+        if context_policy.get("include_dealers"):
+            dealer_context = build_dealer_context_for_prompt(
+                dealers=dealers,
+                lead_state=lead_state,
+                user_message=user_message,
+            )
+        else:
+            dealer_context = ""
     else:
         dealer_context = build_dealer_context_for_prompt(
             dealers=dealer_context_data,
@@ -433,9 +473,9 @@ def process_lead_message(
     # -----------------------------
     # 2.7 Contexto de reglas internas adicionales
     # -----------------------------
-    # Por ahora, si RULES_CONTEXT_MODE = "rag", usamos rules_context del RAG.
-    # Si está en "structured", dejamos este bloque vacío porque ya tenemos
-    # get_internal_context() como fuente determinística principal.
+    # rag: usa reglas recuperadas dinámicamente por RAG.
+    # structured: deja este bloque vacío porque get_internal_context()
+    # ya entrega las reglas determinísticas principales del negocio.
     if RULES_CONTEXT_MODE == "rag":
         rules_context = rag_context.get("rules_context", "")
     else:
